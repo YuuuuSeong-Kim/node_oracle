@@ -11,7 +11,6 @@ let bookDAO = require("./bookDAO");
 
 app.get("/listBook", async  (req, res)=> {
     let arr = await bookDAO.listBook();
-    console.log(arr.data)
     res.send(arr)
 })
 
