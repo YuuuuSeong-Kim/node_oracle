@@ -1,16 +1,8 @@
-let http = require("http");
-let express = require("express");
-let app = express();
-
-app.use(express.static("public"));
-app.use(express.bodyParser());
-app.use(app.router)
-
 const oracledb = require('oracledb');
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 const mypw = "madang"  // set mypw to the hr schema password
 
-async function connections(){
+let connections = async () => {
     const conn = await oracledb.getConnection({
         user:"c##madang",
         password:mypw,
@@ -19,7 +11,7 @@ async function connections(){
     return await conn
 }
 
-async function listBook() {
+ let listBook = async () => {
     const connection = await connections();
 
     const result = await connection.execute(
@@ -35,7 +27,7 @@ async function listBook() {
     return arr;
 }
 
-async function getNextBookID(){
+let getNextBookID = async () => {
     const connection = await connections();
 
     const result = await connection.execute(
@@ -45,7 +37,7 @@ async function getNextBookID(){
     return await result.rows[0].BOOKID
 }
 
-async function insert(req) {
+let insert = async (req)=> {
     const connection = await connections();
 
     const result = await connection.execute(
@@ -56,7 +48,7 @@ async function insert(req) {
     return result.rowsAffected;
 }
 
-async function update(req){
+let update = async (req) =>{
     const connection = await connections();
     const result = await connection.execute(
         `update book set bookname= :bookname, price= :price, publisher= :publisher where bookid = :bookid`,req.body
@@ -66,36 +58,12 @@ async function update(req){
     return result.rowsAffected;
 }
 
-async function del(bookid){
+let del = async (bookid) => {
     const conn = await connections();
-    const result = await conn.execute(`delete book where bookid=:bookid`,{bookid:{val:bookid}});
+    const result = await conn.execute(`delete book where bookid=:bookid`,bookid);
     await conn.commit();
     await conn.close();
     return result.rowsAffected;
 }
 
-
-app.get("/listBook", async function (req, res) {
-    let arr = await listBook();
-    res.send(arr)
-})
-
-app.post("/insert", function (req, res) {
-    var re = insert(req);
-    res.send(re)
-})
-
-app.post("/update", function(req,res){
-    var re = update(req)
-    res.send(re)
-})
-
-app.post("/delete", function(req,res){
-    console.log(req.body.bookid)
-    var re = del(req.body.bookid)
-    res.send(re)
-})
-
-http.createServer(app).listen(52273, "192.168.0.57", function () {
-    console.log("서버 가동됨")
-})
+module.exports={listBook,insert,update,del}

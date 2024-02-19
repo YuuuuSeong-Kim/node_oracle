@@ -7,14 +7,15 @@
     <title>Document</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
-        $(function () {
-            function loadBook() {
+        $( () =>{
+            let loadBook = () => {
                 $.ajax({
                     url: "/listBook",
-                    success: function (list) {
+                    success: (list) =>{
                         $("#bookid").val(list.nextNO)
                         var tbody = $("#listBook");
-                        $.each(list.data, function () {
+                        $.each(list.data, function (){
+                            console.log(this)
                             var tr = $("<tr></tr>").attr("class","col");
                             tr.append($("<td></td>").html(this.BOOKID).attr("class","bookid"));
                             tr.append($("<td></td>").html(this.BOOKNAME).attr("class","bookname"));
@@ -33,15 +34,15 @@
                 $("#publisher").val($(this).children(".publisher").text())
             })
 
-            $("#btnUpdate").click(function () {
+            $("#btnUpdate").click( ()=> {
                 var data = $("form").serializeArray();
-                $.post("/update", data, function () {
+                $.post("/update", data, () =>{
                     alert("수정완료");
                     window.location.reload();
                 })
             })
             
-            $("#btnDelete").click(function(){
+            $("#btnDelete").click(()=>{
                 var bookid = {bookid:$("#bookid").val()};
                 var result = confirm("정말 해당 도서를 삭제하시겠습니까?");
                 if(result){
@@ -53,7 +54,7 @@
                         url:"/delete",
                         data:bookid,
                         type:'post',
-                        success:function(){
+                        success:()=>{
                             alert("삭제완료");
                             window.location.reload();
                         }
@@ -61,9 +62,9 @@
                 }
             })
 
-            $("#btnInsert").click(function () {
+            $("#btnInsert").click( () =>{
                 var data = $("form").serializeArray();
-                $.post("/insert", data, function () {
+                $.post("/insert", data, () =>{
                     alert("등록완료");
                     window.location.reload();
                     // loadBook();
